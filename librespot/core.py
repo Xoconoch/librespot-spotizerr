@@ -40,7 +40,6 @@ from librespot.crypto import CipherPair
 from librespot.crypto import DiffieHellman
 from librespot.crypto import Packet
 from librespot.mercury import MercuryClient
-from librespot.mercury import MercuryRequests
 from librespot.mercury import RawMercuryRequest
 from librespot.metadata import AlbumId
 from librespot.metadata import ArtistId
@@ -56,17 +55,9 @@ from librespot.proto import Keyexchange_pb2 as Keyexchange
 from librespot.proto import Metadata_pb2 as Metadata
 from librespot.proto import Playlist4External_pb2 as Playlist4External
 from librespot.proto.ExplicitContentPubsub_pb2 import UserAttributesUpdate
-try:
-    from librespot.proto.spotify.login5.v3 import Login5_pb2 as Login5
-    from librespot.proto.spotify.login5.v3 import ClientInfo_pb2 as Login5ClientInfo
-    from librespot.proto.spotify.login5.v3.credentials import Credentials_pb2 as Login5Credentials
-    LOGIN5_AVAILABLE = True
-except ImportError as e:
-    # Login5 protobuf files not available, will use fallback
-    LOGIN5_AVAILABLE = False
-    Login5 = None
-    Login5ClientInfo = None
-    Login5Credentials = None
+from librespot.proto.spotify.login5.v3 import Login5_pb2 as Login5
+from librespot.proto.spotify.login5.v3 import ClientInfo_pb2 as Login5ClientInfo
+from librespot.proto.spotify.login5.v3.credentials import Credentials_pb2 as Login5Credentials
 from librespot.structure import Closeable
 from librespot.structure import MessageListener
 from librespot.structure import RequestListener
@@ -214,7 +205,7 @@ class ApiClient(Closeable):
         proto_req = ClientToken.ClientTokenRequest(
             request_type=ClientToken.ClientTokenRequestType.REQUEST_CLIENT_DATA_REQUEST,
             client_data=ClientToken.ClientDataRequest(
-                client_id=MercuryRequests.keymaster_client_id,
+                client_id="65b708073fc0480ea92a077233ca87bd",
                 client_version=Version.version_name,
                 connectivity_sdk_data=Connectivity.ConnectivitySdkData(
                     device_id=self.__session.device_id(),
@@ -1298,10 +1289,6 @@ class Session(Closeable, MessageListener, SubListener):
 
     def __authenticate_login5(self, credential: Authentication.LoginCredentials) -> None:
         """Authenticate using Login5 to get access token"""
-        if not LOGIN5_AVAILABLE:
-            self.logger.warning("Login5 protobuf files not available, skipping Login5 authentication")
-            return
-            
         try:
             # Build Login5 request
             login5_request = Login5.LoginRequest()
@@ -1339,11 +1326,17 @@ class Session(Closeable, MessageListener, SubListener):
                         self.__login5_token_expiry = int(time.time()) + login5_response.ok.access_token_expires_in
                         self.logger.info("Login5 authentication successful, got access token")
                     else:
-                        self.logger.warning("Login5 authentication failed: {}".format(login5_response.error))
+                        error_msg = "Login5 authentication failed"
+                        if login5_response.HasField('error'):
+                            error_msg += f": {login5_response.error}"
+                        self.logger.error(error_msg)
+                        # Don't raise exception here, as the session can still work with some limitations
                 else:
-                    self.logger.warning("Login5 request failed with status: {}".format(response.status_code))
+                    self.logger.error("Login5 request failed with status: {}".format(response.status_code))
+                    # Don't raise exception here, as the session can still work with some limitations
         except Exception as e:
-            self.logger.warning("Failed to authenticate with Login5: {}".format(e))
+            self.logger.error("Failed to authenticate with Login5: {}".format(e))
+            # Don't raise exception here, as the session can still work with some limitations
     
     def get_login5_token(self) -> typing.Union[str, None]:
         """Get the Login5 access token if available and not expired"""
@@ -2247,7 +2240,7 @@ class TokenProvider:
         if len(scopes) == 0:
             raise RuntimeError("The token doesn't have any scope")
         
-        # Try to use Login5 token first
+        # Use Login5 token
         login5_token = self._session.get_login5_token()
         if login5_token:
             # Create a StoredToken-compatible object using Login5 token
@@ -2255,31 +2248,16 @@ class TokenProvider:
             self.logger.debug("Using Login5 access token for scopes: {}".format(scopes))
             return login5_stored_token
             
-        # Fallback to existing token logic
+        # Check existing tokens
         token = self.find_token_with_all_scopes(scopes)
         if token is not None:
             if token.expired():
                 self.__tokens.remove(token)
             else:
                 return token
-        self.logger.debug(
-            "Token expired or not suitable, requesting again. scopes: {}, old_token: {}"
-            .format(scopes, token))
         
-        # Try keymaster endpoint as fallback (deprecated)
-        try:
-            response = self._session.mercury().send_sync_json(
-                MercuryRequests.request_token(self._session.device_id(),
-                                              ",".join(scopes)))
-            token = TokenProvider.StoredToken(response)
-            self.logger.debug(
-                "Updated token successfully! scopes: {}, new_token: {}".format(
-                    scopes, token))
-            self.__tokens.append(token)
-            return token
-        except Exception as e:
-            self.logger.warning("Failed to get token from keymaster endpoint: {}".format(e))
-            raise RuntimeError("Unable to obtain access token")
+        # No valid token available
+        raise RuntimeError("Unable to obtain access token. Login5 authentication may have failed.")
 
     class Login5StoredToken:
         """StoredToken-compatible wrapper for Login5 access tokens"""

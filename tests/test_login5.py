@@ -31,7 +31,7 @@ def test_with_stored_credentials():
                 if login5_token:
                     print(f"✓ Login5 token available: {login5_token[:20]}...")
                 else:
-                    print("⚠ Login5 token not available, using fallback")
+                    print("⚠ Login5 token not available")
                 
                 session.close()
                 return True
@@ -76,7 +76,7 @@ def test_with_username_password():
             if login5_token:
                 print(f"✓ Login5 token available: {login5_token[:20]}...")
             else:
-                print("⚠ Login5 token not available, using fallback")
+                print("⚠ Login5 token not available")
             
             session.close()
             return True
