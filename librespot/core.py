@@ -56,7 +56,6 @@ from librespot.proto import Metadata_pb2 as Metadata
 from librespot.proto import Playlist4External_pb2 as Playlist4External
 from librespot.proto.ExplicitContentPubsub_pb2 import UserAttributesUpdate
 from librespot.proto.spotify.login5.v3 import Login5_pb2 as Login5
-from librespot.proto.spotify.login5.v3 import ClientInfo_pb2 as Login5ClientInfo
 from librespot.proto.spotify.login5.v3.credentials import Credentials_pb2 as Login5Credentials
 from librespot.structure import Closeable
 from librespot.structure import MessageListener
