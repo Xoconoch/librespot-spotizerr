@@ -299,15 +299,6 @@ class MercuryRequests:
         @TODO implement function
         """
 
-    @staticmethod
-    def request_token(device_id, scope):
-        # NOTE: This method is deprecated in favor of Login5 authentication
-        # Keeping for backward compatibility but should use Session.get_login5_token()
-        return JsonMercuryRequest(
-            RawMercuryRequest.get(
-                "hm://keymaster/token/authenticated?scope={}&client_id={}&device_id={}"
-                .format(scope, MercuryRequests.keymaster_client_id,
-                        device_id)))
 
 
 class RawMercuryRequest:
