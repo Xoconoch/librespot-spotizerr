@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 """
-Test script using Zeroconf to verify Login5 authentication
-This method doesn't require Spotify Premium
+Test script using Zeroconf/Spotify Connect to verify Login5 authentication
 """
 
 import logging

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Test script to verify Login5 authentication is working
+Test script to verify Login5 authentication using stored credentials
 """
 
 import logging
@@ -47,68 +47,26 @@ def test_with_stored_credentials():
         print(f"✗ Authentication failed: {e}")
         return False
 
-def test_with_username_password():
-    """Test with username/password (requires user input)"""
-    print("\n=== Testing with username/password ===")
-    
-    username = input("Enter Spotify username (or press Enter to skip): ").strip()
-    if not username:
-        print("Skipping username/password test")
-        return False
-        
-    password = input("Enter Spotify password: ").strip()
-    if not password:
-        print("Skipping username/password test")
-        return False
-    
-    try:
-        session = Session.Builder().user_pass(username, password).create()
-        print(f"✓ Successfully authenticated as: {session.username()}")
-        
-        # Test token retrieval
-        token_provider = session.tokens()
-        try:
-            token = token_provider.get("playlist-read")
-            print(f"✓ Successfully got playlist-read token: {token[:20]}...")
-            
-            # Check if Login5 token is available
-            login5_token = session.get_login5_token()
-            if login5_token:
-                print(f"✓ Login5 token available: {login5_token[:20]}...")
-            else:
-                print("⚠ Login5 token not available")
-            
-            session.close()
-            return True
-        except Exception as e:
-            print(f"✗ Token retrieval failed: {e}")
-            session.close()
-            return False
-            
-    except Exception as e:
-        print(f"✗ Authentication failed: {e}")
-        return False
-
 def main():
     print("Testing Login5 Authentication Implementation")
     print("=" * 50)
     
-    # Test 1: Stored credentials
+    # Test with stored credentials
     stored_success = test_with_stored_credentials()
     
-    # Test 2: Username/password (optional)
-    manual_success = test_with_username_password()
+    # Note: Username/password authentication has been deprecated by Spotify
+    # and is no longer supported. Use stored credentials or OAuth flow instead.
     
     print("\n" + "=" * 50)
     print("Test Results:")
-    print(f"Stored credentials: {'✓ PASS' if stored_success else '✗ FAIL'}")
-    print(f"Username/password: {'✓ PASS' if manual_success else '✗ FAIL'}")
+    print(f"Stored credentials: {'✓ PASS' if stored_success else '✗ FAIL or NO CREDENTIALS'}")
     
-    if stored_success or manual_success:
+    if stored_success:
         print("\n🎉 Login5 authentication is working!")
         return 0
     else:
-        print("\n⚠ Could not test authentication - no valid credentials")
+        print("\n⚠ Could not test authentication - no valid credentials.json file found")
+        print("  Please authenticate using OAuth or other supported methods first.")
         return 1
 
 if __name__ == "__main__":
