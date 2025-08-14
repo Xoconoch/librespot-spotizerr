@@ -205,7 +205,7 @@ class ApiClient(Closeable):
         proto_req = ClientToken.ClientTokenRequest(
             request_type=ClientToken.ClientTokenRequestType.REQUEST_CLIENT_DATA_REQUEST,
             client_data=ClientToken.ClientDataRequest(
-                client_id="65b708073fc0480ea92a077233ca87bd",
+                client_id=Session.CLIENT_ID,
                 client_version=Version.version_name,
                 connectivity_sdk_data=Connectivity.ConnectivitySdkData(
                     device_id=self.__session.device_id(),
@@ -783,6 +783,7 @@ class MessageType(enum.Enum):
 
 class Session(Closeable, MessageListener, SubListener):
     """ """
+    CLIENT_ID = "65b708073fc0480ea92a077233ca87bd"  # Spotify client ID for librespot
     cipher_pair: typing.Union[CipherPair, None]
     country_code: str = "EN"
     connection: typing.Union[ConnectionHolder, None]
@@ -1294,7 +1295,7 @@ class Session(Closeable, MessageListener, SubListener):
             login5_request = Login5.LoginRequest()
             
             # Set client info
-            login5_request.client_info.client_id = "65b708073fc0480ea92a077233ca87bd"
+            login5_request.client_info.client_id = Session.CLIENT_ID
             login5_request.client_info.device_id = self.__inner.device_id
             
             # Set stored credential from APWelcome
