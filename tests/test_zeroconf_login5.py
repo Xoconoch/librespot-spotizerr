@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 """
-Test script using Zeroconf to verify Login5 authentication
-This method doesn't require Spotify Premium
+Test script using Zeroconf/Spotify Connect to verify Login5 authentication
 """
 
 import logging
@@ -53,7 +52,7 @@ def test_zeroconf_login5():
                 if login5_token:
                     print(f"✓ Login5 token available: {login5_token[:20]}...")
                 else:
-                    print("⚠ Login5 token not available, using fallback")
+                    print("⚠ Login5 token not available")
                 
                 # Check if credentials were saved
                 if pathlib.Path("credentials.json").exists():
