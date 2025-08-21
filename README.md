@@ -4,7 +4,7 @@ Spotizerr's librespot python integration
 
 ## About The Project
 
-This project is to further add more features for the spotizerr project, forked from [librespot-python](https://github.com/Xoconoch/librespot-spotizerr)
+This project is to further add more features for the Spotizerr project, forked from [librespot-python](https://github.com/kokarare1212/librespot-python)
 
 ## Getting Started
 
@@ -14,16 +14,8 @@ This project is to further add more features for the spotizerr project, forked f
 
 ### Installation
 
-Stable Version
-
 ```commandline
 pip install librespot-spotizerr
-```
-
-Snapshot Version \***Not recommended**
-
-```commandline
-pip install git+https://github.com/Xoconoch/librespot-spotizerr
 ```
 
 ## Usage
@@ -67,11 +59,6 @@ stream = session.content_feeder().load(track_id, VorbisOnlyAudioQuality(AudioQua
 # stream.input_stream.stream().read() to get one byte of the music stream.
 ```
 
-Other uses are
-[examples](https://github.com/Xoconoch/librespot-spotizerr/tree/main/examples)
-or read [this document](https://librespot-spotizerr.rtfd.io) for detailed
-specifications.
-
 ## Debug
 
 To display the debug information, you need to inject the following code at the
@@ -90,8 +77,8 @@ Pull requests are welcome.
 
 ## License
 
-Distributed under the GPL yada yada, See
-[LICENSE](https://github.com/Xoconoch/librespot-spotizerr/blob/main/LICENSE)
+Licensed under the Apache License, Version 2.0. See
+[LICENSE](https://github.com/spotizerr-dev/librespot-spotizerr/blob/main/LICENSE)
 for more information.
 
 ## Related Projects

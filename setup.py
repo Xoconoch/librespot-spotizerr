@@ -20,10 +20,11 @@ setuptools.setup(name="librespot-spotizerr",
                  author="Xoconoch",
                  url="https://github.com/Xoconoch/librespot-spotizerr",
                  license="Apache-2.0", # SPDX identifier
+                 license_files=["LICENSE", "NOTICE"],
                  packages=setuptools.find_packages("."),
                  install_requires=install_requires,
                  classifiers=[
                      "Development Status :: 1 - Planning",
-                     # "License :: OSI Approved :: Apache Software License", # Removed
+                     "License :: OSI Approved :: Apache Software License",
                      "Topic :: Multimedia :: Sound/Audio"
                  ])

@@ -1,6 +1,7 @@
 include README.md
 include requirements.txt
 include LICENSE
+include NOTICE
 
 # Include all .proto files in the proto directory and its subdirectories
 graft proto
