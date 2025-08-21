@@ -299,13 +299,6 @@ class MercuryRequests:
         @TODO implement function
         """
 
-    @staticmethod
-    def request_token(device_id, scope):
-        return JsonMercuryRequest(
-            RawMercuryRequest.get(
-                "hm://keymaster/token/authenticated?scope={}&client_id={}&device_id={}"
-                .format(scope, MercuryRequests.keymaster_client_id,
-                        device_id)))
 
 
 class RawMercuryRequest:
